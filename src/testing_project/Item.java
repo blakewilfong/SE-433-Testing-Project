@@ -2,7 +2,7 @@ package testing_project;
 
 import java.util.Objects;
 
-class Item {
+public class Item {
 	private final String name;
 	
 	public Item(String name) {

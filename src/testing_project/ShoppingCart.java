@@ -8,7 +8,7 @@ public class ShoppingCart {
     private final Catalog catalog;
 
     public ShoppingCart(Catalog catalog) {
-        this.cartMap = new HashMap<Item, Integer>();
+        this.cartMap = new HashMap<>();
         this.catalog = catalog;
     }
 
