@@ -1,5 +1,7 @@
 package testing_project;
 
+import testing_project.exceptions.ItemValidationException;
+
 import java.util.Scanner;
 
 public class AppInterface {
@@ -64,13 +66,37 @@ public class AppInterface {
 
     public void readCommands() {
 
-        String command;
+        String input;
         while (true) {
+            System.out.println("Available user actions: ");
+            System.out.println("Add item to the shopping cart");
+            System.out.println("Get current total");
+            System.out.println("See contents of shopping cart");
+            System.out.println("Edit quantity of items in shopping cart");
+            System.out.println("Remove items from shopping cart");
+            System.out.println("Quit");
+            System.out.println("Enter the first word of the action you want to do");
             System.out.print("> ");
-            command = sc.nextLine();
-            if (command.compareTo("quit") == 0) {
+
+            input = sc.nextLine().toLowerCase().split("\\s+")[0];
+
+            if (input.equals("add")) {
+                System.out.println("Enter the item name you want to add to your order");
+                String itemName = sc.nextLine();
+                System.out.println("Enter the quantity you want to order");
+                int quantity = Integer.parseInt(sc.nextLine());
+                try {
+                    engine.shoppingCart.addItem(new Item(itemName), quantity);
+                    System.out.println(quantity + " " + itemName + " added to order");
+                } catch (ItemValidationException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+            else if (input.equals("quit")) {
                 break;
             }
+
+
         }
     }
 	

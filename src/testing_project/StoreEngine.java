@@ -8,5 +8,6 @@ public class StoreEngine {
 		ProcessingEngine engine = new ProcessingEngine(catalog);
 		AppInterface appInterface = new AppInterface(engine);
 		appInterface.setUpNewCustomer();
+		appInterface.readCommands();
 	}
 }

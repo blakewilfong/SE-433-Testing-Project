@@ -1,5 +1,7 @@
 package testing_project;
 
+import testing_project.exceptions.ItemValidationException;
+
 import java.util.HashMap;
 
 public class ShoppingCart {
@@ -12,11 +14,15 @@ public class ShoppingCart {
         this.catalog = catalog;
     }
 
-    public void addItem(Item item, int quantity) {
-        if (!catalog.hasItem(item)) {
-            System.out.println("Item not in catalog");
-            return;
-        }
+    public boolean validateItem(Item item){
+        return cartMap.containsKey(item);
+    }
+
+    public void addItem(Item item, int quantity) throws ItemValidationException {
+
+        if (quantity <= 0) throw new ItemValidationException("Quantity must be greater than zero");
+        if (!validateItem(item)) throw new ItemValidationException("Item not in catalog");
+
         if (cartMap.containsKey(item)) {
             int newQty = cartMap.get(item) + quantity;
             cartMap.put(item, newQty);
