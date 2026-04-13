@@ -1,5 +1,5 @@
 package testing_project;
 
-public class ShippingType {
-
+public enum ShippingType {
+	STANDARD, NEXTDAY
 }
