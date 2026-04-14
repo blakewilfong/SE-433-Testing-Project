@@ -41,15 +41,17 @@ public class ShoppingService {
 		int subTotal = shoppingCart.getSubTotal();
 		if (subTotal == 0) return "0";
 		int total = subTotal;
+		State state = customer.state();
+		ShippingType shippingType = customer.shippingType();
 
-		if (customer.state == State.IL || customer.state == State.CA || customer.state == State.NY) {
+		if (state == State.IL || state == State.CA || state == State.NY) {
 			int tax = subTotal * 6 / 100;
 			total += tax;
 		}
 		int shippingCost = 0;
-		if (customer.shippingType == ShippingType.NEXTDAY) {
+		if (shippingType == ShippingType.NEXTDAY) {
 			shippingCost = 2500;
-		} else if (customer.shippingType == ShippingType.STANDARD && subTotal <= 5000){
+		} else if (shippingType == ShippingType.STANDARD && subTotal <= 5000){
 			shippingCost = 1000;
 		}
 		total += shippingCost;
