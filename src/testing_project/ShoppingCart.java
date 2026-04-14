@@ -15,7 +15,7 @@ public class ShoppingCart {
     }
 
     public boolean validateItem(Item item){
-        return cartMap.containsKey(item);
+        return catalog.hasItem(item);
     }
 
     public void addItem(Item item, int quantity) throws ItemValidationException {
@@ -54,12 +54,14 @@ public class ShoppingCart {
         }
     }
 
-    public int getTotal() {
+    public String getTotal() {
         int total = 0;
         for (Item item : cartMap.keySet()) {
             total +=  cartMap.get(item) * catalog.getPrice(item);
         }
-        return total;
+        int dollars = Math.abs(total / 100);
+        int cents = Math.abs(total % 100);
+        return String.format("$%d.%02d", dollars, cents);
     }
 
     public void seeContents() {
