@@ -1,11 +1,11 @@
 package testing_project;
 
-public class StoreEngine {
+public class Main {
 	
 	public static void main( String[] args) {
 
 		Catalog catalog = new Catalog();
-		ProcessingEngine engine = new ProcessingEngine(catalog);
+		Engine engine = new Engine(catalog);
 		AppInterface appInterface = new AppInterface(engine);
 		appInterface.setUpNewCustomer();
 		appInterface.readCommands();

@@ -1,10 +1,10 @@
 package testing_project;
 
 public class Customer {
-    private String firstName;
-    private String lastName;
-    private State state;
-    private ShippingType shippingType;
+    public String firstName;
+    public String lastName;
+    public State state;
+    public ShippingType shippingType;
 
     public Customer(String firstName, String lastName, State state, ShippingType shippingType) {
         this.firstName = firstName;
