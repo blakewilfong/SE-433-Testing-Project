@@ -5,8 +5,8 @@ public class Main {
 	public static void main( String[] args) {
 
 		Catalog catalog = new Catalog();
-		Engine engine = new Engine(catalog);
-		AppInterface appInterface = new AppInterface(engine);
+		ShoppingService shoppingService = new ShoppingService(catalog);
+		AppInterface appInterface = new AppInterface(shoppingService);
 		appInterface.setUpNewCustomer();
 		appInterface.readCommands();
 	}

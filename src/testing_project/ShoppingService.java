@@ -68,4 +68,8 @@ public class ShoppingService {
         return subtotal >= 100 && subtotal <= 9999999;
     }
 
+	public int getItemCount(){
+		return shoppingCart.countItems();
+	}
+
 }

@@ -5,11 +5,11 @@ import testing_project.exceptions.ItemValidationException;
 import java.util.Scanner;
 
 public class AppInterface {
-	private final Engine engine;
+	private final ShoppingService shoppingService;
     private final Scanner sc;
 
-    public AppInterface(Engine engine) {
-        this.engine = engine;
+    public AppInterface(ShoppingService shoppingService) {
+        this.shoppingService = shoppingService;
         this.sc = new Scanner(System.in);
     }
 
@@ -55,18 +55,18 @@ public class AppInterface {
             System.out.println("Is that correct? (Yes/No)");
             String userResponse = sc.nextLine().trim().toUpperCase();
             if (userResponse.equals("YES")) {
-                System.out.println("Great!");
+                System.out.println("Thanks, " + firstName + "!");
                 break;
             } else {
                 System.out.println("Let's try this again");
             }
         }
-        engine.createCustomer(firstName, lastName, state, shippingType);
+        shoppingService.createCustomer(firstName, lastName, state, shippingType);
     }
 
     public void readCommands() {
-        String command = null;
-
+        String command;
+        int quantity;
         while (true) {
 
             System.out.println("Enter 'help' to see available user actions: ");
@@ -91,51 +91,72 @@ public class AppInterface {
                 String itemName = sc.nextLine().toUpperCase();
                 System.out.println("Enter the quantity you want to order");
                 System.out.println("> ");
-                int quantity = Integer.parseInt(sc.nextLine());
+
                 try {
-                    engine.addItem(new Item(itemName), quantity);
-                    System.out.println(quantity + " " + itemName + " added to order");
+                    quantity = Integer.parseInt(sc.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Quantity must be an integer");
+                    continue;
+                }
+                try {
+                    shoppingService.addItem(new Item(itemName), quantity);
+                    System.out.println("Cart now has " + shoppingService.getItemCount() + " items");
                 } catch (ItemValidationException e){
                     System.out.println(e.getMessage());
                 }
             }
             else if (command.equals("total")){
-                System.out.println("Your current total including tax and shipping is " + engine.getTotal());
+                System.out.println("Your current total including tax and shipping is " + shoppingService.getTotal());
             }
             else if (command.equals("cart")){
-                System.out.println("Item, Quantity, Total");
-                System.out.println(engine.seeContents());
+                String cartMessage = shoppingService.seeContents();
+                if (cartMessage.equals("Cart is empty")){
+                    System.out.println(cartMessage);
+                } else {
+                    System.out.println("Item, Quantity, Total");
+                    System.out.println(cartMessage);
+                }
             }
             else if (command.equals("edit")){
-                System.out.println(engine.seeContents());
+                System.out.println(shoppingService.seeContents());
                 System.out.println("Enter the item name you want to edit on your order");
                 System.out.println("> ");
                 String itemName = sc.nextLine().toUpperCase();
                 System.out.println("Enter the quantity you want to order");
                 System.out.println("> ");
-                int quantity = Integer.parseInt(sc.nextLine());
                 try {
-                    engine.editQuantity(new Item(itemName), quantity);
+                    quantity = Integer.parseInt(sc.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Quantity must be an integer");
+                    continue;
+                }
+                try {
+                    shoppingService.editQuantity(new Item(itemName), quantity);
                     System.out.println(itemName + " quantity updated to " + quantity);
                 } catch (ItemValidationException e) {
                     System.out.println(e.getMessage());
                 }
             }
             else if (command.equals("remove")){
-                System.out.println(engine.seeContents());
+                System.out.println(shoppingService.seeContents());
                 System.out.println("Enter the item name you want to edit on your order");
                 System.out.println("> ");
                 String itemName = sc.nextLine().toUpperCase();
                 try {
-                    engine.removeItem(new Item(itemName));
+                    shoppingService.removeItem(new Item(itemName));
+                    System.out.println(itemName + " removed from cart");
                 } catch (ItemValidationException e) {
                     System.out.println(e.getMessage());
                 }
-                System.out.println(itemName + " removed from cart");
+
             }
             else if (command.equals("checkout")){
-                System.out.println("transaction completed");
-                engine.shoppingCart.clearCart();
+                if (shoppingService.checkout()) {
+                    System.out.println("transaction completed");
+                    shoppingService.shoppingCart.clearCart();
+                } else {
+                    System.out.println("Subtotal must be above $1 or below $99,999.99 to checkout");
+                }
             }
             else if (command.equals("quit")) {
                 break;

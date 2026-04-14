@@ -46,11 +46,16 @@ public class ShoppingCart {
     }
     @Override
     public String toString() {
+        if (cartMap.isEmpty()) return "Cart is empty";
+        int total = 0;
         StringBuilder sb = new StringBuilder();
+        String totalString = "";
         for (Item item : cartMap.keySet()) {
             int quantity = cartMap.get(item);
-            String priceString = String.format("$%.2f", catalog.getPrice(item) / 100.0);
-
+            int itemSubtotal = (catalog.getPrice(item) * quantity);
+            total += itemSubtotal;
+            String priceString = String.format("$%.2f", itemSubtotal / 100.0);
+            totalString = String.format("$%.2f", total / 100.0);
             sb.append(item.getName())
                     .append(", ")
                     .append(quantity)
@@ -58,10 +63,19 @@ public class ShoppingCart {
                     .append(priceString)
                     .append("\n");
         }
+        sb.append("Subtotal.........").append(totalString).append("\n");
         return sb.toString();
     }
 
     public void clearCart() {
         cartMap.clear();
+    }
+
+    public int countItems(){
+        int totalItems = 0;
+        for (int num: cartMap.values()){
+            totalItems += num;
+        }
+        return totalItems;
     }
 }
