@@ -21,7 +21,7 @@ public class ShoppingCart {
     public void addItem(Item item, int quantity) throws ItemValidationException {
 
         if (quantity <= 0) throw new ItemValidationException("Quantity must be greater than zero");
-        if (!validateItem(item)) throw new ItemValidationException("Item not in catalog");
+        if (!catalog.hasItem(item)) throw new ItemValidationException("Item not in catalog");
 
         if (cartMap.containsKey(item)) {
             int newQty = cartMap.get(item) + quantity;
@@ -31,27 +31,20 @@ public class ShoppingCart {
         }
     }
 
-    public void removeItem(Item item, int quantity) {
-        if (cartMap.containsKey(item)) {
-            int newQty = cartMap.get(item) - quantity;
-            if (newQty <= 0) {
-                cartMap.remove(item);
-            } else {
-                cartMap.put(item, newQty);
-            }
-        }
+    public void removeItem(Item item) throws ItemValidationException {
+        if (!cartMap.containsKey(item)) throw new ItemValidationException("Cart does not contain " + item.getName());
+        cartMap.remove(item);
+        System.out.println(item + " removed from cart");
     }
 
-    public void editQuantity(Item item, int quantity) {
-        if (!cartMap.containsKey(item)) {
-            System.out.println("Cart does not contain " + item.getName());
-            return;
-        }
-        if (quantity <= 0) {
+    public void editQuantity(Item item, int quantity) throws ItemValidationException {
+        if (!cartMap.containsKey(item)) throw new ItemValidationException("Cart does not contain " + item.getName());
+        if (quantity == 0) {
             cartMap.remove(item);
-        } else {
+        } else if (quantity > 0) {
             cartMap.put(item, quantity);
-        }
+        } else throw new ItemValidationException("Quantity must be greater than or equal to zero");
+        System.out.println(item + " quantity updated to " + quantity);
     }
 
     public String getTotal() {
