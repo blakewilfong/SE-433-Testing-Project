@@ -55,7 +55,7 @@ public class ShoppingCart {
             int itemSubtotal = (catalog.getPrice(item) * quantity);
             total += itemSubtotal;
             String priceString = String.format("$%.2f", itemSubtotal / 100.0);
-            sb.append(item.getName())
+            sb.append(item.name())
                     .append(", ")
                     .append(quantity)
                     .append(", ")
