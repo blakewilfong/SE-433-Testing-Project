@@ -2,13 +2,13 @@ package testing_project;
 
 import testing_project.exceptions.ItemValidationException;
 
-public class Engine {
+public class ShoppingService {
 	
 	ShoppingCart shoppingCart;
 	Customer customer;
 	Catalog catalog;
 
-	public Engine(Catalog catalog) {
+	public ShoppingService(Catalog catalog) {
 		this.catalog = catalog;
 		this.shoppingCart = new ShoppingCart(catalog);
 		this.customer = null;
@@ -20,7 +20,7 @@ public class Engine {
 
 	public void addItem(Item item, int quantity) throws ItemValidationException {
 		if (quantity <= 0) throw new ItemValidationException("Quantity must be greater than zero");
-		if (catalog.hasItem(item)) throw new ItemValidationException("Item not in catalog");
+		if (!catalog.hasItem(item)) throw new ItemValidationException("Item not in catalog");
 		shoppingCart.addItem(item, quantity);
 	}
 
@@ -39,6 +39,7 @@ public class Engine {
 	public String getTotal(){
 
 		int subTotal = shoppingCart.getSubTotal();
+		if (subTotal == 0) return "0";
 		int total = subTotal;
 
 		if (customer.state == State.IL || customer.state == State.CA || customer.state == State.NY) {
@@ -61,5 +62,10 @@ public class Engine {
 	public String seeContents(){
 		return shoppingCart.toString();
 	}
+
+	public boolean checkout() {
+		int subtotal = shoppingCart.getSubTotal();
+        return subtotal >= 100 && subtotal <= 9999999;
+    }
 
 }
