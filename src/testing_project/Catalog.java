@@ -14,6 +14,8 @@ public class Catalog {
 		catalog.put(new Item("APPLE"), 99);
 		catalog.put(new Item("ORANGE"), 79);
 		catalog.put(new Item("PEAR"), 125);
+		catalog.put(new Item("KIWI"), 100);
+		catalog.put(new Item("GOLDEN APPLE"), 9999999);
 		
 //		catalog.put(new Item("Nintendo GameBoy"), 8999);
 //		catalog.put(new Item("Nintendo Entertainment System"), 17999);

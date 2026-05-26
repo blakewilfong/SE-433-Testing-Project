@@ -31,7 +31,7 @@ public class ShoppingService {
 
 	public void editQuantity(Item item, int quantity) throws ItemValidationException {
 		if (!shoppingCart.hasItem(item)) throw new ItemValidationException("Cart does not contain " + item.name());
-		if (quantity <= 0) throw new ItemValidationException("Quantity must be greater than or equal to zero");
+		if (quantity <= 0) throw new ItemValidationException("Quantity must be greater than zero");
 
 		shoppingCart.editQuantity(item, quantity);
 	}

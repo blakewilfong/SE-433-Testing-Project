@@ -148,7 +148,6 @@ public class AppInterface {
                 } catch (ItemValidationException e) {
                     System.out.println(e.getMessage());
                 }
-
             }
             else if (command.equals("checkout")){
                 if (shoppingService.checkout()) {
@@ -164,10 +163,6 @@ public class AppInterface {
             else {
                 System.out.println("Command not recognized");
             }
-
-
         }
     }
-	
-
 }
