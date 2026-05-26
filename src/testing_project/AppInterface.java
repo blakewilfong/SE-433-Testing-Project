@@ -2,15 +2,24 @@ package testing_project;
 
 import testing_project.exceptions.ItemValidationException;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 public class AppInterface {
-	private final ShoppingService shoppingService;
+
+    private final ShoppingService shoppingService;
     private final Scanner sc;
+    private final PrintStream out;
 
     public AppInterface(ShoppingService shoppingService) {
+        this(shoppingService, System.in, System.out);
+    }
+
+    public AppInterface(ShoppingService shoppingService, InputStream input, PrintStream output) {
         this.shoppingService = shoppingService;
-        this.sc = new Scanner(System.in);
+        this.sc = new Scanner(input);
+        this.out = output;
     }
 
     public void setUpNewCustomer() {
@@ -18,150 +27,160 @@ public class AppInterface {
         String lastName;
         ShippingType shippingType;
         State state;
+
         while (true) {
             shippingType = null;
             state = null;
-            System.out.println("Please enter your first name");
-            System.out.print("> ");
+
+            out.println("Please enter your first name");
+            out.print("> ");
             firstName = sc.nextLine().trim();
-            System.out.println("Please enter your last name");
-            System.out.print("> ");
+
+            out.println("Please enter your last name");
+            out.print("> ");
             lastName = sc.nextLine().trim();
 
             while (state == null) {
-                System.out.println("What state do you want your order shipped to? Please enter the 2 letter state abbreviation");
-                System.out.print("> ");
+                out.println("What state do you want your order shipped to? Please enter the 2 letter state abbreviation");
+                out.print("> ");
                 String userInputState = sc.nextLine().trim().toUpperCase();
+
                 try {
                     state = State.valueOf(userInputState);
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Not a valid state");
+                    out.println("Not a valid state");
                 }
             }
+
             while (shippingType == null) {
-                System.out.println("Enter STD for standard shipping or NEXT for next-day shipping");
-                System.out.print("> ");
+                out.println("Enter STD for standard shipping or NEXT for next-day shipping");
+                out.print("> ");
                 String userInputShipping = sc.nextLine().trim().toUpperCase();
-                if (userInputShipping.equals("STD"))
+
+                if (userInputShipping.equals("STD")) {
                     shippingType = ShippingType.STANDARD;
-                else if (userInputShipping.equals("NEXT"))
+                } else if (userInputShipping.equals("NEXT")) {
                     shippingType = ShippingType.NEXTDAY;
-                else {
-                    System.out.println("Not a valid shipping type");
+                } else {
+                    out.println("Not a valid shipping type");
                 }
             }
-            System.out.println("Your name is " + firstName + " " + lastName);
-            System.out.println("You want " + shippingType + " shipping to " + state.getFullName());
-            System.out.println("Is that correct? (Yes/No)");
+
+            out.println("Your name is " + firstName + " " + lastName);
+            out.println("You want " + shippingType + " shipping to " + state.getFullName());
+            out.println("Is that correct? (Yes/No)");
+
             String userResponse = sc.nextLine().trim().toUpperCase();
+
             if (userResponse.equals("YES")) {
-                System.out.println("Thanks, " + firstName + "!");
+                out.println("Thanks, " + firstName + "!");
                 break;
             } else {
-                System.out.println("Let's try this again");
+                out.println("Let's try this again");
             }
         }
+
         shoppingService.createCustomer(firstName, lastName, state, shippingType);
     }
 
     public void readCommands() {
         String command;
         int quantity;
+
         while (true) {
+            out.println("Enter 'help' to see available user actions: ");
+            out.print("> ");
 
-            System.out.println("Enter 'help' to see available user actions: ");
-            System.out.print("> ");
-            command = sc.nextLine().toLowerCase().split("\\s+")[0];
+            command = sc.nextLine().trim().toLowerCase().split("\\s+")[0];
 
-            if (command.equals("help")){
-                System.out.println("Available user actions: ");
-                System.out.println("ADD: add item to the shopping cart");
-                System.out.println("TOTAL: get current total");
-                System.out.println("CART: see contents of shopping cart");
-                System.out.println("EDIT: edit quantity of an item in shopping cart");
-                System.out.println("REMOVE: remove item from shopping cart");
-                System.out.println("CHECKOUT: complete the transaction for the items in your cart");
-                System.out.println("QUIT");
-                System.out.println("Enter the action you want to perform");
-                System.out.print("> ");
-            }
-            else if (command.equals("add")) {
-                System.out.println("Enter the item name you want to add to your order");
-                System.out.println("> ");
-                String itemName = sc.nextLine().toUpperCase();
-                System.out.println("Enter the quantity you want to order");
-                System.out.println("> ");
+            if (command.equals("help")) {
+                out.println("Available user actions: ");
+                out.println("ADD: add item to the shopping cart");
+                out.println("TOTAL: get current total");
+                out.println("CART: see contents of shopping cart");
+                out.println("EDIT: edit quantity of an item in shopping cart");
+                out.println("REMOVE: remove item from shopping cart");
+                out.println("CHECKOUT: complete the transaction for the items in your cart");
+                out.println("QUIT");
+                out.println("Enter the action you want to perform");
+                out.print("> ");
+            } else if (command.equals("add")) {
+                out.println("Enter the item name you want to add to your order");
+                out.print("> ");
+                String itemName = sc.nextLine().trim().toUpperCase();
+
+                out.println("Enter the quantity you want to order");
+                out.print("> ");
 
                 try {
-                    quantity = Integer.parseInt(sc.nextLine());
+                    quantity = Integer.parseInt(sc.nextLine().trim());
                 } catch (NumberFormatException e) {
-                    System.out.println("Quantity must be an integer");
+                    out.println("Quantity must be an integer");
                     continue;
                 }
+
                 try {
                     shoppingService.addItem(new Item(itemName), quantity);
-                    System.out.println("Cart now has " + shoppingService.getItemCount() + " items");
-                } catch (ItemValidationException e){
-                    System.out.println(e.getMessage());
+                    out.println("Cart now has " + shoppingService.getItemCount() + " items");
+                } catch (ItemValidationException e) {
+                    out.println(e.getMessage());
                 }
-            }
-            else if (command.equals("total")){
-                System.out.println("Your current total including tax and shipping is " + shoppingService.getTotal());
-            }
-            else if (command.equals("cart")){
+            } else if (command.equals("total")) {
+                out.println("Your current total including tax and shipping is " + shoppingService.getTotal());
+            } else if (command.equals("cart")) {
                 String cartMessage = shoppingService.seeContents();
-                if (cartMessage.equals("Cart is empty")){
-                    System.out.println(cartMessage);
+
+                if (cartMessage.equals("Cart is empty")) {
+                    out.println(cartMessage);
                 } else {
-                    System.out.println("Item, Quantity, Total");
-                    System.out.println(cartMessage);
+                    out.println("Item, Quantity, Total");
+                    out.println(cartMessage);
                 }
-            }
-            else if (command.equals("edit")){
-                System.out.println(shoppingService.seeContents());
-                System.out.println("Enter the item name you want to edit on your order");
-                System.out.println("> ");
-                String itemName = sc.nextLine().toUpperCase();
-                System.out.println("Enter the quantity you want to order");
-                System.out.println("> ");
+            } else if (command.equals("edit")) {
+                out.println(shoppingService.seeContents());
+                out.println("Enter the item name you want to edit on your order");
+                out.print("> ");
+                String itemName = sc.nextLine().trim().toUpperCase();
+
+                out.println("Enter the quantity you want to order");
+                out.print("> ");
+
                 try {
-                    quantity = Integer.parseInt(sc.nextLine());
+                    quantity = Integer.parseInt(sc.nextLine().trim());
                 } catch (NumberFormatException e) {
-                    System.out.println("Quantity must be an integer");
+                    out.println("Quantity must be an integer");
                     continue;
                 }
+
                 try {
                     shoppingService.editQuantity(new Item(itemName), quantity);
-                    System.out.println(itemName + " quantity updated to " + quantity);
+                    out.println(itemName + " quantity updated to " + quantity);
                 } catch (ItemValidationException e) {
-                    System.out.println(e.getMessage());
+                    out.println(e.getMessage());
                 }
-            }
-            else if (command.equals("remove")){
-                System.out.println(shoppingService.seeContents());
-                System.out.println("Enter the item name you want to edit on your order");
-                System.out.println("> ");
-                String itemName = sc.nextLine().toUpperCase();
+            } else if (command.equals("remove")) {
+                out.println(shoppingService.seeContents());
+                out.println("Enter the item name you want to remove from your order");
+                out.print("> ");
+                String itemName = sc.nextLine().trim().toUpperCase();
+
                 try {
                     shoppingService.removeItem(new Item(itemName));
-                    System.out.println(itemName + " removed from cart");
+                    out.println(itemName + " removed from cart");
                 } catch (ItemValidationException e) {
-                    System.out.println(e.getMessage());
+                    out.println(e.getMessage());
                 }
-            }
-            else if (command.equals("checkout")){
+            } else if (command.equals("checkout")) {
                 if (shoppingService.checkout()) {
-                    System.out.println("transaction completed");
-                    shoppingService.shoppingCart.clearCart();
+                    out.println("transaction completed");
+                    shoppingService.clearCart();
                 } else {
-                    System.out.println("Subtotal must be above $1 or below $99,999.99 to checkout");
+                    out.println("Subtotal must be at least $1 and no more than $99,999.99 to checkout");
                 }
-            }
-            else if (command.equals("quit")) {
+            } else if (command.equals("quit")) {
                 break;
-            }
-            else {
-                System.out.println("Command not recognized");
+            } else {
+                out.println("Command not recognized");
             }
         }
     }

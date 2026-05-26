@@ -74,4 +74,8 @@ public class ShoppingService {
 		return shoppingCart.countItems();
 	}
 
+	public void clearCart() {
+		shoppingCart.clearCart();
+	}
+
 }
